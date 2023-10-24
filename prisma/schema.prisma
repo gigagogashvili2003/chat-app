@@ -30,7 +30,6 @@ model User {
   @@map(name: "users")
 }
 
-
 model DeactivatedUser {
   id Int @default(autoincrement()) @id
   reason String
@@ -66,4 +65,3 @@ model Session {
 
   @@map(name: "sessions")
 }
-
