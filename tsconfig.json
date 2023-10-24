@@ -41,6 +41,12 @@
       ],
       "@app/common-lib/*": [
         "libs/common-lib/src/*"
+      ],
+      "@app/prisma-lib": [
+        "libs/prisma-lib/src"
+      ],
+      "@app/prisma-lib/*": [
+        "libs/prisma-lib/src/*"
       ]
     }
   }

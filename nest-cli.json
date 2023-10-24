@@ -72,6 +72,15 @@
       "compilerOptions": {
         "tsConfigPath": "libs/common-lib/tsconfig.lib.json"
       }
+    },
+    "prisma-lib": {
+      "type": "library",
+      "root": "libs/prisma-lib",
+      "entryFile": "index",
+      "sourceRoot": "libs/prisma-lib/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/prisma-lib/tsconfig.lib.json"
+      }
     }
   }
 }

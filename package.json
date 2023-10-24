@@ -82,7 +82,8 @@
       "^@app/auth-lib(|/.*)$": "<rootDir>/libs/auth-lib/src/$1",
       "^@app/rmq-lib(|/.*)$": "<rootDir>/libs/rmq-lib/src/$1",
       "^@app/users-lib(|/.*)$": "<rootDir>/libs/users-lib/src/$1",
-      "^@app/common-lib(|/.*)$": "<rootDir>/libs/common-lib/src/$1"
+      "^@app/common-lib(|/.*)$": "<rootDir>/libs/common-lib/src/$1",
+      "^@app/prisma-lib(|/.*)$": "<rootDir>/libs/prisma-lib/src/$1"
     }
   }
 }
