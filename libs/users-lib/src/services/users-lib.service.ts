@@ -1,11 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import { UsersRepository } from '../repositories';
-
+import { Inject, Injectable } from '@nestjs/common';
+import { UsersRepositoryType } from '../types';
+import { UsersRepository } from '../constants';
 @Injectable()
 export class UsersLibService {
-  public constructor(private readonly usersRepository: UsersRepository) {}
+  public constructor(@Inject(UsersRepository) private readonly usersRepository: UsersRepositoryType) {}
 
-  public async findAllUser() {
-    return await this.usersRepository.findAll();
-  }
+  public find() {}
 }

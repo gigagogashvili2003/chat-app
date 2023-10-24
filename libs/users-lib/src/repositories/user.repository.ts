@@ -1,7 +1,6 @@
-import { GenericRepository } from '@app/common-lib';
 import { PrismaLibService } from '@app/prisma-lib';
 import { Injectable } from '@nestjs/common';
-import { $Enums, Prisma, User } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 import { UsersRepository } from '../constants';
 
 @Injectable()
@@ -10,12 +9,22 @@ export class UsersPrismaRepository extends UsersRepository {
     super();
   }
 
-  findOneById(id: number): Promise<User> {
+  public create(data: Prisma.UserCreateInput): Promise<User> {
+    throw new Error('Method not implemented.');
+  }
+  public update(id: number): Promise<User> {
+    throw new Error('Method not implemented.');
+  }
+  public delete(id: number): Promise<User> {
+    throw new Error('Method not implemented.');
+  }
+
+  public findOneById(id: number): Promise<User> {
     this.prisma.user.findMany({});
     throw new Error('Method not implemented.');
   }
 
-  find(params: Prisma.UserFindManyArgs): Promise<Array<User>> {
+  public find(params: Prisma.UserFindManyArgs): Promise<Array<User>> {
     return this.prisma.user.findMany(params);
   }
 }
