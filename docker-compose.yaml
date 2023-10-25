@@ -40,6 +40,15 @@ services:
       - db
       - redis
 
+  notifications:
+    build:
+      context: .
+      dockerfile: ./apps/notifications/Dockerfile
+    command: npm run start:dev notifications
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+
   nginx:
     image: nginx
     ports:

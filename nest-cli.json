@@ -81,6 +81,24 @@
       "compilerOptions": {
         "tsConfigPath": "libs/prisma-lib/tsconfig.lib.json"
       }
+    },
+    "notifications-lib": {
+      "type": "library",
+      "root": "libs/notifications-lib",
+      "entryFile": "index",
+      "sourceRoot": "libs/notifications-lib/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/notifications-lib/tsconfig.lib.json"
+      }
+    },
+    "notifications": {
+      "type": "application",
+      "root": "apps/notifications",
+      "entryFile": "main",
+      "sourceRoot": "apps/notifications/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/notifications/tsconfig.app.json"
+      }
     }
   }
 }

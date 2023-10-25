@@ -1,3 +1,4 @@
+import { EvenetNames } from '@app/common-lib';
 import { UsersLibService } from '@app/users-lib';
 import { Controller } from '@nestjs/common';
 import { EventPattern, Payload } from '@nestjs/microservices';
@@ -6,9 +7,8 @@ import { EventPattern, Payload } from '@nestjs/microservices';
 export class UsersController {
   constructor(private readonly usersLibService: UsersLibService) {}
 
-  @EventPattern('user_exists')
-  public findUser(@Payload() data: any) {
-    console.log(data);
-    return data;
+  @EventPattern(EvenetNames.USERS_EXIST)
+  public findUser(@Payload() data: any): Promise<boolean> | boolean {
+    return true;
   }
 }

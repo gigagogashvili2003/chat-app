@@ -7,7 +7,7 @@ export class AuthController {
   public constructor(private readonly authLibService: AuthLibService) {}
 
   @HttpCode(201)
-  // @UsePipes(new JoiValidationPipe(CreateUserSchema))
+  @UsePipes(new JoiValidationPipe(CreateUserSchema))
   @Post('signup')
   public signup(@Body() createUserDto: CreateUserDto) {
     return this.authLibService.signup(createUserDto);

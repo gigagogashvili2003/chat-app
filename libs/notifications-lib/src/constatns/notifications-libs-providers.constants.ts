@@ -1,0 +1,1 @@
+export const MAIL_SENDER_SERVICE = Symbol('MAIL_SENDER_SERVICE');
