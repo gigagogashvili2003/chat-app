@@ -24,6 +24,13 @@ export class UsersPrismaRepository extends UsersRepository {
     throw new Error('Method not implemented.');
   }
 
+  public findOneByEmail(email: string): Promise<User> {
+    return this.prisma.user.findFirst({ where: { email } });
+  }
+  public findOneByUsername(username: string): Promise<User> {
+    return this.prisma.user.findFirst({ where: { username } });
+  }
+
   public find(params: Prisma.UserFindManyArgs): Promise<Array<User>> {
     return this.prisma.user.findMany(params);
   }

@@ -5,5 +5,7 @@ import { UsersRepository } from '../constants';
 export class UsersLibService {
   public constructor(@Inject(UsersRepository) private readonly usersRepository: UsersRepositoryType) {}
 
-  public find() {}
+  public findOneByEmail(email: string) {
+    return this.usersRepository.
+  }
 }
