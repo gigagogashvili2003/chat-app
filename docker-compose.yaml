@@ -45,6 +45,8 @@ services:
       context: .
       dockerfile: ./apps/notifications/Dockerfile
     command: npm run start:dev notifications
+    ports:
+      - 3002:3002
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules

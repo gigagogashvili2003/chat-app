@@ -12,6 +12,7 @@ import { CommonLibModule } from '@app/common-lib';
 @Module({
   imports: [
     NotificationsLibModule,
+    RmqLibModule,
     CommonLibModule,
     ConfigModule.forRoot({
       envFilePath: NOTIFICATIONS_ENV_FILE_PATH,

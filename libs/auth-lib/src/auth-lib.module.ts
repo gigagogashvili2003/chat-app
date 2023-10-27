@@ -4,10 +4,7 @@ import { RmqLibModule } from '@app/rmq-lib';
 import { QueueNames } from '@app/common-lib';
 
 @Module({
-  imports: [
-    RmqLibModule.register({ name: QueueNames.USERS_QUEUE }),
-    RmqLibModule.register({ name: QueueNames.NOTIFICATIONS_QUEUE }),
-  ],
+  imports: [RmqLibModule.register({ name: QueueNames.USERS_QUEUE })],
   providers: [AuthLibService],
   exports: [AuthLibService],
 })

@@ -1,15 +1,19 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CreateUserDto } from '../dtos';
 import { ClientProxy } from '@nestjs/microservices';
-import { MessagePatterns, QueueNames } from '@app/common-lib';
+import { QueueNames } from '@app/common-lib';
 
 @Injectable()
 export class AuthLibService {
-  public constructor(@Inject(QueueNames.USERS_QUEUE) private readonly usersClient: ClientProxy) {}
+  public constructor(@Inject(QueueNames.USERS_QUEUE) private usersClient: ClientProxy) {}
 
   public async signup(createUserDto: CreateUserDto) {
-    const userExists = this.usersClient.send(MessagePatterns.FIND_ONE, { id: 1 });
-    console.log(userExists);
-    return this.usersClient.send('find_user', { id: 1 });
+    try {
+      // const userExists = await lastValueFrom(this.usersClient.send(MessagePatterns.FIND_ONE, { id: 1 }));
+      return 'MOVIDA';
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
   }
 }

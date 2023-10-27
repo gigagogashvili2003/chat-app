@@ -1,6 +1,6 @@
 import { EventPatterns } from '@app/common-lib';
 import { MAIL_SENDER_SERVICE, MailSender, sendEmailCredentials } from '@app/notifications-lib';
-import { Controller, Get, Inject } from '@nestjs/common';
+import { Controller, Inject } from '@nestjs/common';
 import { EventPattern, Payload } from '@nestjs/microservices';
 
 @Controller()
