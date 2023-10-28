@@ -1,4 +1,4 @@
 import { GenericRepository } from '@app/common-lib';
-import { Prisma, User } from '@prisma/client';
+import { User } from '@prisma/client';
 
-export const UsersRepository = GenericRepository<User, Prisma.UserFindManyArgs, Prisma.UserCreateInput>;
+export const UsersRepository = GenericRepository<User>;

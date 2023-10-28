@@ -18,7 +18,6 @@ async function bootstrap() {
   app.setGlobalPrefix(notificationsConstants.NOTIFICATIONS_PREFIX);
 
   await app.startAllMicroservices();
-
   await app.listen(PORT);
 }
 

@@ -53,6 +53,12 @@
       ],
       "@app/notifications-lib/*": [
         "libs/notifications-lib/src/*"
+      ],
+      "@app/utils-lib": [
+        "libs/utils-lib/src"
+      ],
+      "@app/utils-lib/*": [
+        "libs/utils-lib/src/*"
       ]
     }
   }

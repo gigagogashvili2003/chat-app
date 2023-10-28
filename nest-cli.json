@@ -99,6 +99,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/notifications/tsconfig.app.json"
       }
+    },
+    "utils-lib": {
+      "type": "library",
+      "root": "libs/utils-lib",
+      "entryFile": "index",
+      "sourceRoot": "libs/utils-lib/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/utils-lib/tsconfig.lib.json"
+      }
     }
   }
 }

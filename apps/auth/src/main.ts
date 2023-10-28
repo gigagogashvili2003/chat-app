@@ -17,7 +17,7 @@ async function bootstrap() {
   const PORT = configService.get<number>(AuthContstants.AUTH_PORT);
   app.setGlobalPrefix(AuthContstants.AUTH_PREFIX);
 
-  app.startAllMicroservices();
+  await app.startAllMicroservices();
   await app.listen(PORT);
 }
 bootstrap();
