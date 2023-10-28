@@ -2,6 +2,11 @@
 
 ![GitHub last commit](https://img.shields.io/github/last-commit/gigagogashvili2003/chat-app)
 ![GitHub](https://img.shields.io/github/license/gigagogashvili2003/chat-app)
+![GitHub stars](https://img.shields.io/github/stars/gigagogashvili2003/chat-app)
+![GitHub forks](https://img.shields.io/github/forks/gigagogashvili2003/chat-app)
+![GitHub issues](https://img.shields.io/github/issues/gigagogashvili2003/chat-app)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/gigagogashvili2003/chat-app)
+
 
 Welcome to our Chat Application built with NestJS, Prisma, RabbitMQ, and microservices. 🚀 This feature-rich application allows users to chat in real-time, leveraging the power of NestJS's microservices architecture and RabbitMQ for message brokering.
 
