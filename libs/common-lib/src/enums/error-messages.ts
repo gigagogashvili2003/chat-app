@@ -5,4 +5,5 @@ export enum ErrorMessages {
   INCORRECT_PASSWORD = 'Incorrect password!',
   NOT_AUTHORIZED = 'You are unauthorized!',
   REFRESH_TOKEN_MISSING = 'Refresh token is missing from cookies!',
+  DIRECT_ACCESS_NOT_ALLOWED = 'Direct access on services not allowed!',
 }
