@@ -1,4 +1,8 @@
 export enum ErrorMessages {
   USER_EMAIL_ALREADY_EXISTS = 'User with provided email already exists!',
   USER_USERNAME_ALREADY_EXISTS = 'User with provided username already exists!',
+  USER_NOT_FOUND = 'User not found!',
+  INCORRECT_PASSWORD = 'Incorrect password!',
+  NOT_AUTHORIZED = 'You are unauthorized!',
+  REFRESH_TOKEN_MISSING = 'Refresh token is missing from cookies!',
 }
