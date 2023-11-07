@@ -59,6 +59,12 @@
       ],
       "@app/utils-lib/*": [
         "libs/utils-lib/src/*"
+      ],
+      "@app/sessions-lib": [
+        "libs/sessions-lib/src"
+      ],
+      "@app/sessions-lib/*": [
+        "libs/sessions-lib/src/*"
       ]
     }
   }

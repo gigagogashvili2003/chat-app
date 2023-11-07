@@ -1,21 +1,21 @@
 import { CreateUserDto } from '@app/auth-lib';
 import { MessagePatterns } from '@app/common-lib';
-import { UsersLibService, UsersMessagePatterns } from '@app/users-lib';
+import { PromiseUser, UsersLibService, UsersMessagePatterns } from '@app/users-lib';
 import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
-import { Prisma } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 
 @Controller()
 export class UsersController {
   public constructor(private readonly usersLibService: UsersLibService) {}
 
   @MessagePattern(UsersMessagePatterns.FIND_ONE_EMAIL)
-  public findOneByEmail(@Payload() email: string) {
+  public findOneByEmail(@Payload() email: string): PromiseUser {
     return this.usersLibService.findOneByEmail(email);
   }
 
   @MessagePattern(UsersMessagePatterns.FIND_ONE_USERNAME)
-  public findOneByUsername(@Payload() username: string) {
+  public findOneByUsername(@Payload() username: string): PromiseUser {
     return this.usersLibService.findOneByUsername(username);
   }
 

@@ -108,6 +108,15 @@
       "compilerOptions": {
         "tsConfigPath": "libs/utils-lib/tsconfig.lib.json"
       }
+    },
+    "sessions-lib": {
+      "type": "library",
+      "root": "libs/sessions-lib",
+      "entryFile": "index",
+      "sourceRoot": "libs/sessions-lib/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/sessions-lib/tsconfig.lib.json"
+      }
     }
   }
 }

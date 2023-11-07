@@ -6,9 +6,10 @@ import { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { AuthLibService } from '../services';
 import { UserWithoutPassword } from '@app/users-lib';
+import { Tokens } from '@app/utils-lib';
 
 @Injectable()
-export class RefreshTokenStrategy extends PassportStrategy(Strategy, 'refresh_token') {
+export class RefreshTokenStrategy extends PassportStrategy(Strategy, Tokens.REFRESH_TOKEN) {
   constructor(
     private readonly configService: ConfigService,
     private readonly authLibService: AuthLibService,

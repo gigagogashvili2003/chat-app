@@ -2,19 +2,19 @@ import { ErrorMessages, UserJwtPayload } from '@app/common-lib';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
-import { ExtractJwt } from 'passport-jwt';
-import { Strategy } from 'passport-local';
+import { ExtractJwt, Strategy } from 'passport-jwt';
 import { AuthLibService } from '../services';
+import { Tokens } from '@app/utils-lib';
 
 @Injectable()
-export class AccessTokenStrategy extends PassportStrategy(Strategy, 'access_token') {
+export class AccessTokenStrategy extends PassportStrategy(Strategy, Tokens.ACCESS_TOKEN) {
   public constructor(
     private readonly configService: ConfigService,
     private readonly authLibService: AuthLibService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: configService.get('ACCESS_TOKEN_SECRET'),
+      secretOrKey: 'accesstokensecret',
     });
   }
 

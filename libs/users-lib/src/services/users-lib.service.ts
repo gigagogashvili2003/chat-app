@@ -6,8 +6,8 @@ import { Prisma } from '@prisma/client';
 export class UsersLibService {
   public constructor(@Inject(UsersRepository) private readonly usersRepository: UsersPrismaRepository) {}
 
-  public findOneByEmail(email: string) {
-    return this.usersRepository.findOneByEmail(email);
+  public findOneByEmail(email: string, include?: Prisma.UserInclude) {
+    return this.usersRepository.findOneByEmail(email, include);
   }
 
   public findOneByUsername(username: string) {

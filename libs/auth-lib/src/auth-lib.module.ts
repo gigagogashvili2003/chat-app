@@ -4,10 +4,12 @@ import { RmqLibModule } from '@app/rmq-lib';
 import { QueueNames } from '@app/common-lib';
 import { UtilsLibModule } from '@app/utils-lib';
 import { AuthGatewayMiddleware } from './middlewares';
+import { AccessTokenStrategy, LocalStrategy } from './strategies';
+import { SessionsLibModule } from '@app/sessions-lib';
 
 @Module({
-  imports: [RmqLibModule.register({ name: QueueNames.USERS_QUEUE }), UtilsLibModule],
-  providers: [AuthLibService],
+  imports: [RmqLibModule.register({ name: QueueNames.USERS_QUEUE }), UtilsLibModule, SessionsLibModule],
+  providers: [AuthLibService, LocalStrategy, AccessTokenStrategy],
   exports: [AuthLibService],
 })
 export class AuthLibModule {

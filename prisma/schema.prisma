@@ -21,12 +21,12 @@ model User {
   role Role @default(USER)
   active Boolean @default(false)
   verified Boolean @default(false)
-  createdAt DateTime @map(name: "created_at") @default(now())
-  updatedAt DateTime @map(name: "updated_at") @default(now())
+  createdAt DateTime? @map(name: "created_at") @default(now())
+  updatedAt DateTime? @map(name: "updated_at") @default(now())
 
   deactivatedUser DeactivatedUser?
   disabledUser DisabledUser?
-  sessions Session[]
+  session Session[]
 
   @@map(name: "users")
 }
@@ -36,8 +36,8 @@ model DeactivatedUser {
   reason String
   userId Int @unique @map(name: "user_id")
   user User @relation(fields: [userId], references: [id])
-  createdAt DateTime @map(name: "created_at")
-  updatedAt DateTime @map(name: "updated_at")
+  createdAt DateTime? @map(name: "created_at") @default(now())
+  updatedAt DateTime? @map(name: "updated_at") @default(now())
   
   @@map(name: "deactivated_users")
 }
@@ -48,21 +48,24 @@ model DisabledUser {
   disabledAt DateTime @map(name: "disabled_at")
   userId Int @unique @map(name: "user_id")
   user User @relation(fields: [userId], references: [id])
-  createdAt DateTime @map(name: "created_at")
-  updatedAt DateTime @map(name: "updated_at")
+  createdAt DateTime? @map(name: "created_at") @default(now())
+  updatedAt DateTime? @map(name: "updated_at") @default(now())
 
   @@map(name: "disabled_users")
 }
 
 model Session {
   id Int @default(autoincrement()) @id
-  deviceId String @map(name: "device_id")
-  refreshToken String @map(name: "refresh_token")
+  deviceId String @unique @map(name: "device_id")
+  accessToken String @unique @map(name: "access_token")
+  accessTokenExpiresAt DateTime @map(name: "access_token_expires_at")
+  refreshToken String @unique @map(name: "refresh_token")
+  refreshTokenExpiresAt DateTime @map(name: "refresh_token_expires_at")
   userId Int @map(name: "user_id")
   user User @relation(fields: [userId], references: [id])
-  expiresAt DateTime @map(name: "expiresAt")
-  createdAt DateTime @map(name: "created_at")
-  updatedAt DateTime @map(name: "updated_at")
+  createdAt DateTime? @map(name: "created_at") @default(now())
+  updatedAt DateTime? @map(name: "updated_at") @default(now())
 
   @@map(name: "sessions")
 }
+

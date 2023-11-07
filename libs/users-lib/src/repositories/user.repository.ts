@@ -9,9 +9,9 @@ export class UsersPrismaRepository extends GenericRepository<User> {
     super();
   }
 
-  public create(data: Prisma.UserCreateInput): Promise<User> {
+  public create(entity: Prisma.UserCreateInput): Promise<User> {
     return this.prisma.user.create({
-      data,
+      data: { ...entity },
     });
   }
   public update(id: number): Promise<User> {
@@ -21,19 +21,22 @@ export class UsersPrismaRepository extends GenericRepository<User> {
     throw new Error('Method not implemented.');
   }
 
-  public findOneById(id: number): Promise<User> {
-    this.prisma.user.findMany({});
-    throw new Error('Method not implemented.');
+  public findUnique(args: Prisma.UserFindUniqueArgs): Promise<User> {
+    return this.prisma.user.findUnique(args);
   }
 
-  public findOneByEmail(email: string): Promise<User> {
-    return this.prisma.user.findFirst({ where: { email } });
+  public findOneById(id: number): Promise<User> {
+    return this.prisma.user.findUnique({ where: { id } });
+  }
+
+  public findOneByEmail(email: string, include?: Prisma.UserInclude): Promise<User> {
+    return this.prisma.user.findFirst({ where: { email }, include });
   }
   public findOneByUsername(username: string): Promise<User> {
     return this.prisma.user.findFirst({ where: { username } });
   }
 
-  public find(params: Prisma.UserFindManyArgs): Promise<Array<User>> {
+  public findMany(params: Prisma.UserFindManyArgs): Promise<Array<User>> {
     return this.prisma.user.findMany(params);
   }
 }
