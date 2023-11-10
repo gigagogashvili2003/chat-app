@@ -1,10 +1,25 @@
 import { PrismaLibService } from '@app/prisma-lib';
 import { Injectable } from '@nestjs/common';
-import { Prisma, User } from '@prisma/client';
+import { $Enums, Prisma, User } from '@prisma/client';
 import { GenericRepository } from '@app/common-lib';
 
 @Injectable()
 export class UsersPrismaRepository extends GenericRepository<User> {
+  deleteById(
+    id: number,
+  ): Promise<{
+    id: number;
+    username: string;
+    email: string;
+    password: string;
+    role: $Enums.Role;
+    active: boolean;
+    verified: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+  }> {
+    throw new Error('Method not implemented.');
+  }
   public constructor(private readonly prisma: PrismaLibService) {
     super();
   }

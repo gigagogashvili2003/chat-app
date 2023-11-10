@@ -1,6 +1,6 @@
 export interface ITokens {
   accessToken: string;
-  accessTokenExpiresAt: Date;
+  accessTokenExpiresAt: string | Date;
   refreshToken: string;
-  refreshTokenExpiresAt: Date;
+  refreshTokenExpiresAt: string | Date;
 }

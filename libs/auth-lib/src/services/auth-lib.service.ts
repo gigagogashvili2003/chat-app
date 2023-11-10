@@ -1,14 +1,14 @@
-import { ConflictException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { CreateUserDto, SignOutDto } from '../dtos';
-import { ClientProxy } from '@nestjs/microservices';
 import {
-  ErrorMessages,
-  GenericResponse,
-  QueueNames,
-  RequestWithUserNotOmitPassword,
-  SuccessMessages,
-  UserJwtPayload,
-} from '@app/common-lib';
+  BadRequestException,
+  ConflictException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { CreateUserDto } from '../dtos';
+import { ClientProxy } from '@nestjs/microservices';
+import { ErrorMessages, GenericResponse, QueueNames, SuccessMessages, UserJwtPayload } from '@app/common-lib';
 import { lastValueFrom } from 'rxjs';
 import { PromiseUser, UsersMessagePatterns } from '@app/users-lib';
 import { HashService, JwtService, Tokens, UtilsLibService } from '@app/utils-lib';
@@ -62,42 +62,23 @@ export class AuthLibService {
     }
   }
 
-  public async signin(request: RequestWithUserNotOmitPassword<User>): Promise<GenericResponse<SignInResponse>> {
-    const { password, ...userWithoutPassword } = request.user;
-
+  public async signin(
+    user: User,
+    sessionPayload: Prisma.SessionCreateManyInput,
+  ): Promise<GenericResponse<SignInResponse>> {
     try {
-      const payload: UserJwtPayload = {
-        sub: userWithoutPassword.id,
-        email: userWithoutPassword.email,
-        role: userWithoutPassword.role,
-        username: userWithoutPassword.username,
-      };
+      const { password, ...userWithoutPassword } = user;
 
-      const [accessToken, refreshToken] = await this.signTokens(payload);
+      const { accessToken, refreshToken, accessTokenExpiresAt, refreshTokenExpiresAt } = sessionPayload;
 
-      const accessTokenExpirationTime = this.jwtService.getAccessTokenExpirationTime();
-      const refreshTokenExpirationTime = this.jwtService.getRefreshTokenExpirationTime();
-
-      const accessTokenMaxAge = this.jwtService.getAccessTokenMaxAge();
-      const refreshTokenMaxAge = this.jwtService.getRefreshTokenMaxAge();
-
-      await this.sessionsService.create({
-        refreshToken,
-        userId: userWithoutPassword.id,
-        deviceId: 'Some random string',
-        accessToken,
-        accessTokenExpiresAt: accessTokenExpirationTime,
-        refreshTokenExpiresAt: refreshTokenExpirationTime,
+      const sessionAlreadyExists = await this.sessionsService.find({
+        userId: user.id,
+        deviceId: sessionPayload.deviceId,
       });
 
-      request.res.cookie(Tokens.ACCESS_TOKEN, accessToken, {
-        httpOnly: true,
-        maxAge: accessTokenMaxAge,
-      });
-      request.res.cookie(Tokens.REFRESH_TOKEN, refreshToken, {
-        httpOnly: true,
-        maxAge: refreshTokenMaxAge,
-      });
+      if (!sessionAlreadyExists) {
+        await this.sessionsService.create(sessionPayload);
+      }
 
       return {
         message: SuccessMessages.USER_CREATED_SUCCESFULLY,
@@ -106,9 +87,9 @@ export class AuthLibService {
           userInfo: userWithoutPassword,
           tokenInfo: {
             accessToken,
-            accessTokenExpiresAt: accessTokenExpirationTime,
+            accessTokenExpiresAt,
             refreshToken,
-            refreshTokenExpiresAt: refreshTokenExpirationTime,
+            refreshTokenExpiresAt,
           },
         },
       };
@@ -120,14 +101,24 @@ export class AuthLibService {
     }
   }
 
-  public async signout(request: RequestWithUserNotOmitPassword<User>, signOutDto: SignOutDto) {
-    const response = request.res;
-    const { deviceId } = signOutDto;
-
+  public async signout(user: User, deviceId: string): Promise<GenericResponse<null>> {
     try {
-      console.log(request.user);
-      // response.clearCookie(Tokens.ACCESS_TOKEN);
-      // response.clearCookie(Tokens.REFRESH_TOKEN);
+      if (!deviceId) {
+        throw new BadRequestException(ErrorMessages.DEVICE_ID_MISSING);
+      }
+
+      const session = await this.sessionsService.find({ userId: user.id, deviceId });
+
+      if (!session) {
+        throw new NotFoundException(ErrorMessages.SESSION_NOT_FOUND);
+      }
+
+      await this.sessionsService.delete({ deviceId, userId: user.id });
+
+      return {
+        status: 200,
+        message: SuccessMessages.USER_SIGNED_OUT_SUCCESSFULLY,
+      };
     } catch (err) {
       throw err;
     }
@@ -140,6 +131,23 @@ export class AuthLibService {
     } catch (err) {
       throw err;
     }
+  }
+
+  public generateAccessTokenCookie(accessToken: string) {
+    const accessTokenExpiresAt = this.jwtService.getAccessTokenExpirationTime();
+    const accessTokenMaxAge = this.jwtService.getAccessTokenMaxAge();
+
+    const cookie = `AccessToken=${accessToken}; HttpOnly; Expires=${accessTokenExpiresAt}; Max-Age=${accessTokenMaxAge}`;
+
+    return { cookie, accessTokenExpiresAt };
+  }
+
+  public generateRefreshTokenCookie(refreshToken: string) {
+    const refreshTokenExpiresAt = this.jwtService.getRefreshTokenExpirationTime();
+    const refreshTokenMaxAge = this.jwtService.getRefreshTokenMaxAge();
+
+    const cookie = `RefreshToken=${refreshToken}; HttpOnly; Expires=${refreshTokenExpiresAt}; Max-Age=${refreshTokenMaxAge}`;
+    return { cookie, refreshTokenExpiresAt };
   }
 
   public signTokens(payload: UserJwtPayload) {

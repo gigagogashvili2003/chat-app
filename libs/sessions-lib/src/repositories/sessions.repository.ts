@@ -5,6 +5,21 @@ import { Prisma, Session } from '@prisma/client';
 
 @Injectable()
 export class SessionPrismaRepository extends GenericRepository<Session> {
+  deleteById(
+    id: number,
+  ): Promise<{
+    id: number;
+    deviceId: string;
+    accessToken: string;
+    accessTokenExpiresAt: Date;
+    refreshToken: string;
+    refreshTokenExpiresAt: Date;
+    userId: number;
+    createdAt: Date;
+    updatedAt: Date;
+  }> {
+    throw new Error('Method not implemented.');
+  }
   public constructor(private readonly prisma: PrismaLibService) {
     super();
   }
@@ -15,8 +30,8 @@ export class SessionPrismaRepository extends GenericRepository<Session> {
   public update(id: number): Promise<Session> {
     throw new Error('Method not implemented.');
   }
-  public delete(id: number): Promise<Session> {
-    throw new Error('Method not implemented.');
+  public delete(where: Prisma.SessionWhereUniqueInput): Promise<Session> {
+    return this.prisma.session.delete({ where });
   }
 
   public findOneByDeviceId(deviceId: string) {
@@ -31,7 +46,7 @@ export class SessionPrismaRepository extends GenericRepository<Session> {
     return this.prisma.session.findFirst({ where: { refreshToken: token } });
   }
 
-  public find(params: Prisma.SessionFindManyArgs): Promise<Array<Session>> {
-    return this.prisma.session.findMany(params);
+  public find(where: Prisma.SessionWhereUniqueInput): Promise<Session> {
+    return this.prisma.session.findUnique({ where });
   }
 }
