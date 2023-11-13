@@ -1,6 +1,7 @@
-import { AuthLibService, CreateUserDto, CreateUserSchema, SignInResponse } from '@app/auth-lib';
+import { AuthLibService, CreateUserDto, CreateUserSchema, SessionCreateInput, SignInResponse } from '@app/auth-lib';
 import {
   AccessTokenGuard,
+  CurrentUser,
   ErrorMessages,
   GenericResponse,
   JoiValidationPipe,
@@ -43,12 +44,12 @@ export class AuthController {
 
     const [accessToken, refreshToken] = await this.authLibService.signTokens(payload);
 
-    const { cookie: accessTokenCookie, accessTokenExpiresAt } =
+    const { cookie: accessTokenCookie, expiresAt: accessTokenExpiresAt } =
       this.authLibService.generateAccessTokenCookie(accessToken);
-    const { cookie: refreshTokenCookie, refreshTokenExpiresAt } =
+    const { cookie: refreshTokenCookie, expiresAt: refreshTokenExpiresAt } =
       this.authLibService.generateRefreshTokenCookie(refreshToken);
 
-    const sessionPayload = {
+    const sessionPayload: SessionCreateInput = {
       accessToken,
       refreshToken,
       accessTokenExpiresAt,
@@ -67,7 +68,13 @@ export class AuthController {
   @Post('signout')
   public signout(@Req() request: RequestWithUser<User>) {
     const deviceId = request.headers['device-id'] as string;
-
     return this.authLibService.signout(request.user, deviceId);
+  }
+
+  @HttpCode(200)
+  @UseGuards(AccessTokenGuard)
+  @Post('request-account-verification')
+  public requestAccountVerification(@CurrentUser() user: User) {
+    return this.authLibService.requestAccountVerification(user);
   }
 }

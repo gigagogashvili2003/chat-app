@@ -1,1 +1,1 @@
-export * from './notifications.providers';
+export * from './notifications-lib.providers';

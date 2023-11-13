@@ -1,10 +1,10 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { MailSender, sendEmailCredentials } from '../interfaces';
 import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
 
 @Injectable()
-export class nodemailerService implements MailSender {
+export class MailSenderService implements MailSender {
   private transporter: nodemailer.Transporter;
 
   public constructor(private readonly configService: ConfigService) {

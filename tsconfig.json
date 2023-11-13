@@ -65,6 +65,12 @@
       ],
       "@app/sessions-lib/*": [
         "libs/sessions-lib/src/*"
+      ],
+      "@app/redis-lib": [
+        "libs/redis-lib/src"
+      ],
+      "@app/redis-lib/*": [
+        "libs/redis-lib/src/*"
       ]
     }
   }

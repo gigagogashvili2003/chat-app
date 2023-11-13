@@ -6,3 +6,4 @@ export * from './repositories';
 export * from './providers';
 export * from './enums';
 export * from './types';
+export * from './interfaces';

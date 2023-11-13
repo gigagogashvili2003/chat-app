@@ -10,12 +10,14 @@ import { CreateUserDto } from '../dtos';
 import { ClientProxy } from '@nestjs/microservices';
 import { ErrorMessages, GenericResponse, QueueNames, SuccessMessages, UserJwtPayload } from '@app/common-lib';
 import { lastValueFrom } from 'rxjs';
-import { PromiseUser, UsersMessagePatterns } from '@app/users-lib';
+import { PromiseUser, UserCreateInput, UsersMessagePatterns } from '@app/users-lib';
 import { HashService, JwtService, Tokens, UtilsLibService } from '@app/utils-lib';
 import { Prisma, User } from '@prisma/client';
 import { SessionsLibService } from '@app/sessions-lib';
-import { SignInResponse } from '../interfaces';
+import { IGenerateTokenCookie, SessionCreateInput, SignInResponse } from '../interfaces';
 import { PrismaErrorCodes, PrismaErrorMessages } from '@app/prisma-lib';
+import { RedisLibService } from '@app/redis-lib';
+import { MAIL_SENDER_SERVICE, MailSender } from '@app/notifications-lib';
 
 @Injectable()
 export class AuthLibService {
@@ -25,6 +27,8 @@ export class AuthLibService {
     private readonly jwtService: JwtService,
     private readonly sessionsService: SessionsLibService,
     private readonly utilsLibService: UtilsLibService,
+    private readonly redisLibService: RedisLibService,
+    @Inject(MAIL_SENDER_SERVICE) private readonly mailSenderService: MailSender,
   ) {}
 
   public async signup(createUserDto: CreateUserDto): Promise<GenericResponse> {
@@ -46,7 +50,7 @@ export class AuthLibService {
 
       const hashedPassword = await this.hashService.hash(password, 10);
 
-      const newUserPayload: Prisma.UserCreateInput = {
+      const newUserPayload: UserCreateInput = {
         ...createUserDto,
         password: hashedPassword,
       };
@@ -62,10 +66,7 @@ export class AuthLibService {
     }
   }
 
-  public async signin(
-    user: User,
-    sessionPayload: Prisma.SessionCreateManyInput,
-  ): Promise<GenericResponse<SignInResponse>> {
+  public async signin(user: User, sessionPayload: SessionCreateInput): Promise<GenericResponse<SignInResponse>> {
     try {
       const { password, ...userWithoutPassword } = user;
 
@@ -97,6 +98,14 @@ export class AuthLibService {
       if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === PrismaErrorCodes.P2002) {
         throw new ConflictException(PrismaErrorMessages[PrismaErrorCodes.P2002]);
       }
+      throw err;
+    }
+  }
+
+  public requestAccountVerification(user: User) {
+    try {
+      const otp = this.utilsLibService.generateOtpCode();
+    } catch (err) {
       throw err;
     }
   }
@@ -133,24 +142,24 @@ export class AuthLibService {
     }
   }
 
-  public generateAccessTokenCookie(accessToken: string) {
+  public generateAccessTokenCookie(accessToken: string): IGenerateTokenCookie {
     const accessTokenExpiresAt = this.jwtService.getAccessTokenExpirationTime();
     const accessTokenMaxAge = this.jwtService.getAccessTokenMaxAge();
 
     const cookie = `AccessToken=${accessToken}; HttpOnly; Expires=${accessTokenExpiresAt}; Max-Age=${accessTokenMaxAge}`;
 
-    return { cookie, accessTokenExpiresAt };
+    return { cookie, expiresAt: accessTokenExpiresAt };
   }
 
-  public generateRefreshTokenCookie(refreshToken: string) {
+  public generateRefreshTokenCookie(refreshToken: string): IGenerateTokenCookie {
     const refreshTokenExpiresAt = this.jwtService.getRefreshTokenExpirationTime();
     const refreshTokenMaxAge = this.jwtService.getRefreshTokenMaxAge();
 
     const cookie = `RefreshToken=${refreshToken}; HttpOnly; Expires=${refreshTokenExpiresAt}; Max-Age=${refreshTokenMaxAge}`;
-    return { cookie, refreshTokenExpiresAt };
+    return { cookie, expiresAt: refreshTokenExpiresAt };
   }
 
-  public signTokens(payload: UserJwtPayload) {
+  public signTokens(payload: UserJwtPayload): Promise<[string, string]> {
     return Promise.all([
       this.jwtService.sign(payload, Tokens.ACCESS_TOKEN),
       this.jwtService.sign(payload, Tokens.REFRESH_TOKEN),

@@ -32,6 +32,7 @@
     "amqplib": "^0.10.3",
     "bcrypt": "^5.0.1",
     "cookie-parser": "^1.4.6",
+    "ioredis": "^5.3.2",
     "joi": "^17.11.0",
     "nodemailer": "^6.9.7",
     "passport": "^0.6.0",
@@ -98,7 +99,8 @@
       "^@app/prisma-lib(|/.*)$": "<rootDir>/libs/prisma-lib/src/$1",
       "^@app/notifications-lib(|/.*)$": "<rootDir>/libs/notifications-lib/src/$1",
       "^@app/utils-lib(|/.*)$": "<rootDir>/libs/utils-lib/src/$1",
-      "^@app/sessions-lib(|/.*)$": "<rootDir>/libs/sessions-lib/src/$1"
+      "^@app/sessions-lib(|/.*)$": "<rootDir>/libs/sessions-lib/src/$1",
+      "^@app/redis-lib(|/.*)$": "<rootDir>/libs/redis-lib/src/$1"
     }
   }
 }

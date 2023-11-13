@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { mailSenderServiceProvider, notificationsModuleProviders } from './providers';
+import { notificationsProviders } from './providers';
 
 @Module({
   imports: [],
-  providers: [...notificationsModuleProviders],
-  exports: [mailSenderServiceProvider],
+  providers: [...notificationsProviders],
+  exports: [...notificationsProviders],
 })
 export class NotificationsLibModule {}
