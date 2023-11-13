@@ -1,13 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { RedisKey, RedisValue } from 'ioredis';
 import { IRedisLibRepository } from '../interfaces';
-import { RedisLibRepository } from '../repositories';
+import { REDIS_REPOSITORY } from '../constants';
+import { RedisTTLS } from '../enums';
 
 @Injectable()
 export class RedisLibService {
-  public constructor(@Inject(RedisLibRepository) private readonly redisRepository: IRedisLibRepository) {}
+  public constructor(@Inject(REDIS_REPOSITORY) private readonly redisRepository: IRedisLibRepository) {}
 
-  public set(key: RedisKey, value: RedisValue, ttl?: number): Promise<'OK'> {
+  public set(key: RedisKey, value: RedisValue, ttl?: RedisTTLS): Promise<'OK'> {
     return this.redisRepository.set(key, value, ttl);
   }
 

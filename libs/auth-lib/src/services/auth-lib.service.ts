@@ -8,16 +8,29 @@ import {
 } from '@nestjs/common';
 import { CreateUserDto } from '../dtos';
 import { ClientProxy } from '@nestjs/microservices';
-import { ErrorMessages, GenericResponse, QueueNames, SuccessMessages, UserJwtPayload } from '@app/common-lib';
+import {
+  ErrorMessages,
+  GenericResponse,
+  QueueNames,
+  RedisKeyTypes,
+  SuccessMessages,
+  UserJwtPayload,
+} from '@app/common-lib';
 import { lastValueFrom } from 'rxjs';
-import { PromiseUser, UserCreateInput, UsersMessagePatterns } from '@app/users-lib';
+import { IUserUpdate, PromiseUser, UserCreateInput, UsersMessagePatterns } from '@app/users-lib';
 import { HashService, JwtService, Tokens, UtilsLibService } from '@app/utils-lib';
 import { Prisma, User } from '@prisma/client';
 import { SessionsLibService } from '@app/sessions-lib';
 import { IGenerateTokenCookie, SessionCreateInput, SignInResponse } from '../interfaces';
 import { PrismaErrorCodes, PrismaErrorMessages } from '@app/prisma-lib';
-import { RedisLibService } from '@app/redis-lib';
-import { MAIL_SENDER_SERVICE, MailSender } from '@app/notifications-lib';
+import { RedisLibService, RedisTTLS } from '@app/redis-lib';
+import {
+  ISendEmailCredentials,
+  MAIL_SENDER_SERVICE,
+  MailMessages,
+  MailSender,
+  MailSubjects,
+} from '@app/notifications-lib';
 
 @Injectable()
 export class AuthLibService {
@@ -82,7 +95,7 @@ export class AuthLibService {
       }
 
       return {
-        message: SuccessMessages.USER_CREATED_SUCCESFULLY,
+        message: SuccessMessages.USER_SIGNED_IN_SUCCESFULLY,
         status: HttpStatus.CREATED,
         body: {
           userInfo: userWithoutPassword,
@@ -102,9 +115,52 @@ export class AuthLibService {
     }
   }
 
-  public requestAccountVerification(user: User) {
+  public async requestAccountVerification(user: User): Promise<GenericResponse<null>> {
+    const { email } = user;
     try {
       const otp = this.utilsLibService.generateOtpCode();
+      const redisKey = `${RedisKeyTypes.EMAIL_VERIFICATION}_${email}`;
+
+      const emailCredentialsPayload: ISendEmailCredentials = {
+        to: email,
+        subject: MailSubjects.EMAIL_VERIFICATION_OTP,
+        message: MailMessages.OTP + otp,
+      };
+
+      await Promise.all([
+        this.redisLibService.set(redisKey, otp, RedisTTLS.FIFTEEN_MINUTE),
+        this.mailSenderService.sendMessage(emailCredentialsPayload),
+      ]);
+
+      return { message: SuccessMessages.OTP_HAS_SENT, status: 200 };
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  public async verifyAccount(user: User, otp: number): Promise<GenericResponse<null>> {
+    try {
+      const redisOtp = await this.redisLibService.get(`${RedisKeyTypes.EMAIL_VERIFICATION}_${user.email}`);
+
+      if (!redisOtp) {
+        throw new NotFoundException(ErrorMessages.OTP_NOT_FOUND);
+      }
+
+      if (parseInt(redisOtp) !== otp) {
+        throw new ConflictException(ErrorMessages.INVALID_OTP);
+      }
+
+      const updateUserPayload: IUserUpdate = {
+        id: user.id,
+        data: { verified: true },
+      };
+
+      const updatedUser = await lastValueFrom(
+        this.usersClient.send(UsersMessagePatterns.UPDATE_USER, updateUserPayload),
+      );
+      await this.redisLibService.delete(`${RedisKeyTypes.EMAIL_VERIFICATION}_${user.email}`);
+
+      return { message: SuccessMessages.ACCOUNT_HAS_VERIFIED, status: 200 };
     } catch (err) {
       throw err;
     }
@@ -123,7 +179,6 @@ export class AuthLibService {
       }
 
       await this.sessionsService.delete({ deviceId, userId: user.id });
-
       return {
         status: 200,
         message: SuccessMessages.USER_SIGNED_OUT_SUCCESSFULLY,

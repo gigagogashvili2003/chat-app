@@ -2,19 +2,20 @@ import { Injectable } from '@nestjs/common';
 import { IRedisLibRepository } from '../interfaces';
 import { Redis, RedisKey, RedisValue } from 'ioredis';
 import { ConfigService } from '@nestjs/config';
+import { RedisTTLS } from '../enums';
 @Injectable()
 export class RedisLibRepository implements IRedisLibRepository {
   private redis: Redis;
 
-  private constructor(private readonly configService: ConfigService) {
+  public constructor(private readonly configService: ConfigService) {
     this.redis = new Redis({
       port: this.configService.get<number>('REDIS_PORT'),
       host: this.configService.get<string>('REDIS_HOST'),
     });
   }
 
-  public set(key: RedisKey, value: RedisValue, ttl?: number): Promise<'OK'> {
-    return this.redis.set(key, value, 'EX', ttl || 3600);
+  public set(key: RedisKey, value: RedisValue, ttl?: RedisTTLS): Promise<'OK'> {
+    return this.redis.set(key, value, 'EX', ttl || RedisTTLS.ONE_HOUR);
   }
 
   public get(key: RedisKey): Promise<string> {

@@ -1,4 +1,11 @@
-import { AuthLibService, CreateUserDto, CreateUserSchema, SessionCreateInput, SignInResponse } from '@app/auth-lib';
+import {
+  AuthLibService,
+  CreateUserDto,
+  CreateUserSchema,
+  SessionCreateInput,
+  SignInResponse,
+  VerifyAccountSchema,
+} from '@app/auth-lib';
 import {
   AccessTokenGuard,
   CurrentUser,
@@ -9,7 +16,19 @@ import {
   RequestWithUser,
   UserJwtPayload,
 } from '@app/common-lib';
-import { BadRequestException, Body, Controller, HttpCode, Post, Req, UseGuards, UsePipes } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  HttpCode,
+  Param,
+  Patch,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+  UsePipes,
+} from '@nestjs/common';
 import { User } from '@prisma/client';
 
 @Controller()
@@ -76,5 +95,15 @@ export class AuthController {
   @Post('request-account-verification')
   public requestAccountVerification(@CurrentUser() user: User) {
     return this.authLibService.requestAccountVerification(user);
+  }
+
+  @HttpCode(200)
+  @UseGuards(AccessTokenGuard)
+  @Patch('verify-account')
+  public verifyAccount(
+    @CurrentUser() user: User,
+    @Query(new JoiValidationPipe(VerifyAccountSchema)) params: { otp: string },
+  ) {
+    return this.authLibService.verifyAccount(user, parseInt(params.otp, 10));
   }
 }

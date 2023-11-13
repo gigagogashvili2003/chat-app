@@ -4,6 +4,6 @@ import { MailSenderService } from '../services';
 export const notificationsProviders = [
   {
     provide: MAIL_SENDER_SERVICE,
-    useValue: MailSenderService,
+    useClass: MailSenderService,
   },
 ];

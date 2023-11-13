@@ -1,0 +1,1 @@
+export const REDIS_REPOSITORY = Symbol('REDIS_REPOSITORY');

@@ -1,5 +1,5 @@
-import { sendEmailCredentials } from './send-email-credentials.interface';
+import { ISendEmailCredentials } from './send-email-credentials.interface';
 
 export interface MailSender {
-  sendMessage(credentials: sendEmailCredentials): Promise<void>;
+  sendMessage(credentials: ISendEmailCredentials): Promise<void>;
 }

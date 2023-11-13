@@ -1,8 +1,9 @@
+import { REDIS_REPOSITORY } from '../constants';
 import { RedisLibRepository } from '../repositories';
 
 export const redisProviders = [
   {
-    provide: RedisLibRepository,
-    useValue: RedisLibRepository,
+    provide: REDIS_REPOSITORY,
+    useClass: RedisLibRepository,
   },
 ];

@@ -1,5 +1,7 @@
-export interface sendEmailCredentials {
+import { MailSubjects } from '../enums';
+
+export interface ISendEmailCredentials {
   to: string;
-  topic: string;
+  subject: MailSubjects;
   message: string;
 }

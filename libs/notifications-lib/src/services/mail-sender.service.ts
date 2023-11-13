@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { MailSender, sendEmailCredentials } from '../interfaces';
+import { ISendEmailCredentials, MailSender } from '../interfaces';
 import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
 
@@ -17,13 +17,13 @@ export class MailSenderService implements MailSender {
     });
   }
 
-  async sendMessage(credentials: sendEmailCredentials): Promise<any> {
-    const { to, message, topic } = credentials;
+  public sendMessage(credentials: ISendEmailCredentials): Promise<any> {
+    const { to, message, subject } = credentials;
 
     const mailOptions: nodemailer.SendMailOptions = {
       from: process.env.EMAIL,
       to,
-      subject: topic,
+      subject,
       text: message,
     };
 

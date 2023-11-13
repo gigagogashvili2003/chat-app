@@ -8,4 +8,8 @@ export enum ErrorMessages {
   DIRECT_ACCESS_NOT_ALLOWED = 'Direct access on services not allowed!',
   DEVICE_ID_MISSING = 'Device ID is required in the headers',
   SESSION_NOT_FOUND = 'Session not found for the given user and device.',
+
+  //OTP
+  INVALID_OTP = 'Invalid OTP. Please check your one-time password and try again',
+  OTP_NOT_FOUND = 'OTP not found. Please initiate the verification process again.',
 }

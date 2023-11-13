@@ -17,4 +17,8 @@ export class UsersLibService {
   public create(userCreateInput: Prisma.UserCreateInput) {
     return this.usersRepository.create(userCreateInput);
   }
+
+  public update(id: number, data: Prisma.UserUpdateInput) {
+    return this.usersRepository.update(id, data);
+  }
 }

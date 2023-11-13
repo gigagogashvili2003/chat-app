@@ -5,9 +5,7 @@ import { GenericRepository } from '@app/common-lib';
 
 @Injectable()
 export class UsersPrismaRepository extends GenericRepository<User> {
-  deleteById(
-    id: number,
-  ): Promise<{
+  deleteById(id: number): Promise<{
     id: number;
     username: string;
     email: string;
@@ -29,8 +27,8 @@ export class UsersPrismaRepository extends GenericRepository<User> {
       data: { ...entity },
     });
   }
-  public update(id: number): Promise<User> {
-    throw new Error('Method not implemented.');
+  public update(id: number, data: Prisma.UserUpdateInput): Promise<User> {
+    return this.prisma.user.update({ where: { id }, data });
   }
   public delete(id: number): Promise<User> {
     throw new Error('Method not implemented.');
