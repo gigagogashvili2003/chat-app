@@ -1,9 +1,13 @@
 import {
+  AuthEndpoints,
   AuthLibService,
+  ChangePasswordDto,
+  ChangePasswordSchema,
   CreateUserDto,
   CreateUserSchema,
   SessionCreateInput,
   SignInResponse,
+  VerifyAccountDto,
   VerifyAccountSchema,
 } from '@app/auth-lib';
 import {
@@ -21,7 +25,7 @@ import {
   Body,
   Controller,
   HttpCode,
-  Param,
+  HttpStatus,
   Patch,
   Post,
   Query,
@@ -35,16 +39,16 @@ import { User } from '@prisma/client';
 export class AuthController {
   public constructor(private readonly authLibService: AuthLibService) {}
 
-  @HttpCode(201)
+  @HttpCode(HttpStatus.CREATED)
   @UsePipes(new JoiValidationPipe(CreateUserSchema))
-  @Post('signup')
+  @Post(AuthEndpoints.SIGNUP)
   public signup(@Body() createUserDto: CreateUserDto): Promise<GenericResponse<null>> {
     return this.authLibService.signup(createUserDto);
   }
 
-  @HttpCode(200)
+  @HttpCode(HttpStatus.ACCEPTED)
   @UseGuards(LocalGuard)
-  @Post('signin')
+  @Post(AuthEndpoints.SIGNIN)
   public async signin(@Req() request: RequestWithUser<User>): Promise<GenericResponse<SignInResponse>> {
     const { id, email, role, username } = request.user;
 
@@ -82,28 +86,38 @@ export class AuthController {
     return this.authLibService.signin(request.user, sessionPayload);
   }
 
-  @HttpCode(200)
+  @HttpCode(HttpStatus.ACCEPTED)
   @UseGuards(AccessTokenGuard)
-  @Post('signout')
+  @Post(AuthEndpoints.SIGNOUT)
   public signout(@Req() request: RequestWithUser<User>) {
     const deviceId = request.headers['device-id'] as string;
     return this.authLibService.signout(request.user, deviceId);
   }
 
-  @HttpCode(200)
+  @HttpCode(HttpStatus.ACCEPTED)
   @UseGuards(AccessTokenGuard)
-  @Post('request-account-verification')
+  @Post(AuthEndpoints.REQUEST_ACCOUNT_VERIFICATION)
   public requestAccountVerification(@CurrentUser() user: User) {
     return this.authLibService.requestAccountVerification(user);
   }
 
-  @HttpCode(200)
+  @HttpCode(HttpStatus.ACCEPTED)
   @UseGuards(AccessTokenGuard)
-  @Patch('verify-account')
+  @Patch(AuthEndpoints.VERIFY_ACCOUNT)
   public verifyAccount(
     @CurrentUser() user: User,
-    @Query(new JoiValidationPipe(VerifyAccountSchema)) params: { otp: string },
+    @Query(new JoiValidationPipe(VerifyAccountSchema)) params: VerifyAccountDto,
   ) {
-    return this.authLibService.verifyAccount(user, parseInt(params.otp, 10));
+    return this.authLibService.verifyAccount(user, params.otp);
+  }
+
+  @HttpCode(HttpStatus.ACCEPTED)
+  @UseGuards(AccessTokenGuard)
+  @Patch(AuthEndpoints.CHANGE_PASSWORD)
+  public changePassword(
+    @CurrentUser() user: User,
+    @Body(new JoiValidationPipe(ChangePasswordSchema)) changePasswordDto: ChangePasswordDto,
+  ) {
+    return this.authLibService.changePassword(user, changePasswordDto);
   }
 }

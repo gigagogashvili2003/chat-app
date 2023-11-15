@@ -5,19 +5,6 @@ import { GenericRepository } from '@app/common-lib';
 
 @Injectable()
 export class UsersPrismaRepository extends GenericRepository<User> {
-  deleteById(id: number): Promise<{
-    id: number;
-    username: string;
-    email: string;
-    password: string;
-    role: $Enums.Role;
-    active: boolean;
-    verified: boolean;
-    createdAt: Date;
-    updatedAt: Date;
-  }> {
-    throw new Error('Method not implemented.');
-  }
   public constructor(private readonly prisma: PrismaLibService) {
     super();
   }
@@ -27,10 +14,15 @@ export class UsersPrismaRepository extends GenericRepository<User> {
       data: { ...entity },
     });
   }
+
   public update(id: number, data: Prisma.UserUpdateInput): Promise<User> {
     return this.prisma.user.update({ where: { id }, data });
   }
   public delete(id: number): Promise<User> {
+    throw new Error('Method not implemented.');
+  }
+
+  deleteById(id: number): Promise<User> {
     throw new Error('Method not implemented.');
   }
 
@@ -42,8 +34,8 @@ export class UsersPrismaRepository extends GenericRepository<User> {
     return this.prisma.user.findUnique({ where: { id } });
   }
 
-  public findOneByEmail(email: string, include?: Prisma.UserInclude): Promise<User> {
-    return this.prisma.user.findFirst({ where: { email }, include });
+  public findOneByEmail(email: string): Promise<User> {
+    return this.prisma.user.findFirst({ where: { email } });
   }
   public findOneByUsername(username: string): Promise<User> {
     return this.prisma.user.findFirst({ where: { username } });

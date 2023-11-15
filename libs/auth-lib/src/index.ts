@@ -6,3 +6,4 @@ export * from './dtos';
 export * from './strategies';
 export * from './middlewares';
 export * from './interfaces';
+export * from './enums';

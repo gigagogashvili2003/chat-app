@@ -6,7 +6,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateUserDto } from '../dtos';
+import { ChangePasswordDto, CreateUserDto } from '../dtos';
 import { ClientProxy } from '@nestjs/microservices';
 import {
   ErrorMessages,
@@ -16,7 +16,7 @@ import {
   SuccessMessages,
   UserJwtPayload,
 } from '@app/common-lib';
-import { lastValueFrom } from 'rxjs';
+import { last, lastValueFrom } from 'rxjs';
 import { IUserUpdate, PromiseUser, UserCreateInput, UsersMessagePatterns } from '@app/users-lib';
 import { HashService, JwtService, Tokens, UtilsLibService } from '@app/utils-lib';
 import { Prisma, User } from '@prisma/client';
@@ -35,12 +35,12 @@ import {
 @Injectable()
 export class AuthLibService {
   public constructor(
-    @Inject(QueueNames.USERS_QUEUE) private usersClient: ClientProxy,
     private readonly hashService: HashService,
     private readonly jwtService: JwtService,
     private readonly sessionsService: SessionsLibService,
     private readonly utilsLibService: UtilsLibService,
     private readonly redisLibService: RedisLibService,
+    @Inject(QueueNames.USERS_QUEUE) private usersClient: ClientProxy,
     @Inject(MAIL_SENDER_SERVICE) private readonly mailSenderService: MailSender,
   ) {}
 
@@ -96,7 +96,7 @@ export class AuthLibService {
 
       return {
         message: SuccessMessages.USER_SIGNED_IN_SUCCESFULLY,
-        status: HttpStatus.CREATED,
+        status: HttpStatus.ACCEPTED,
         body: {
           userInfo: userWithoutPassword,
           tokenInfo: {
@@ -132,13 +132,13 @@ export class AuthLibService {
         this.mailSenderService.sendMessage(emailCredentialsPayload),
       ]);
 
-      return { message: SuccessMessages.OTP_HAS_SENT, status: 200 };
+      return { message: SuccessMessages.OTP_HAS_SENT, status: HttpStatus.ACCEPTED };
     } catch (err) {
       throw err;
     }
   }
 
-  public async verifyAccount(user: User, otp: number): Promise<GenericResponse<null>> {
+  public async verifyAccount(user: User, otp: string): Promise<GenericResponse<null>> {
     try {
       const redisOtp = await this.redisLibService.get(`${RedisKeyTypes.EMAIL_VERIFICATION}_${user.email}`);
 
@@ -146,7 +146,7 @@ export class AuthLibService {
         throw new NotFoundException(ErrorMessages.OTP_NOT_FOUND);
       }
 
-      if (parseInt(redisOtp) !== otp) {
+      if (parseInt(redisOtp) !== parseInt(otp)) {
         throw new ConflictException(ErrorMessages.INVALID_OTP);
       }
 
@@ -160,7 +160,7 @@ export class AuthLibService {
       );
       await this.redisLibService.delete(`${RedisKeyTypes.EMAIL_VERIFICATION}_${user.email}`);
 
-      return { message: SuccessMessages.ACCOUNT_HAS_VERIFIED, status: 200 };
+      return { message: SuccessMessages.ACCOUNT_HAS_VERIFIED, status: HttpStatus.ACCEPTED };
     } catch (err) {
       throw err;
     }
@@ -180,9 +180,42 @@ export class AuthLibService {
 
       await this.sessionsService.delete({ deviceId, userId: user.id });
       return {
-        status: 200,
+        status: HttpStatus.ACCEPTED,
         message: SuccessMessages.USER_SIGNED_OUT_SUCCESSFULLY,
       };
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  public async changePassword(user: User, changePasswordDto: ChangePasswordDto): Promise<GenericResponse<null>> {
+    const { oldPassword, newPassword } = changePasswordDto;
+    const { password } = user;
+
+    try {
+      const passwordsMatch = await this.hashService.compare(oldPassword, password);
+      const oldAndNewPasswordsAreSame = await this.hashService.compare(newPassword, password);
+
+      if (!passwordsMatch) {
+        throw new BadRequestException(ErrorMessages.INVALID_PASSWORD);
+      }
+
+      if (oldAndNewPasswordsAreSame) {
+        throw new BadRequestException(ErrorMessages.SAME_PASSWORDS);
+      }
+
+      const hashedPassword = await this.hashService.hash(newPassword, 10);
+
+      const updateUserPayload: IUserUpdate = {
+        id: user.id,
+        data: { password: hashedPassword },
+      };
+
+      const updatedUser = await lastValueFrom(
+        this.usersClient.send(UsersMessagePatterns.UPDATE_USER, updateUserPayload),
+      );
+
+      return { status: HttpStatus.OK, message: SuccessMessages.PASSWORD_CHANGED_SUCCESFULLY };
     } catch (err) {
       throw err;
     }

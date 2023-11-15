@@ -12,4 +12,6 @@ export enum ErrorMessages {
   //OTP
   INVALID_OTP = 'Invalid OTP. Please check your one-time password and try again',
   OTP_NOT_FOUND = 'OTP not found. Please initiate the verification process again.',
+  INVALID_PASSWORD = 'Invalid old password. Please provide the correct old password.',
+  SAME_PASSWORDS = 'The new password must be different from the current password.',
 }
