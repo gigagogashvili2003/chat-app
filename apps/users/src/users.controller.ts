@@ -20,6 +20,11 @@ export class UsersController {
     return this.usersLibService.findOneByUsername(username);
   }
 
+  @MessagePattern(UsersMessagePatterns.FIND_ONE_ID)
+  public findOneById(@Payload() id: number): Promise<User> {
+    return this.usersLibService.findOneById(id);
+  }
+
   @MessagePattern(UsersMessagePatterns.CREATE_USER)
   public create(@Payload() userCreateInput: Prisma.UserCreateInput) {
     return this.usersLibService.create(userCreateInput);

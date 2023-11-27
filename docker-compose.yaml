@@ -40,6 +40,20 @@ services:
       - db
       - redis
 
+  followers:
+    build:
+      context: .
+      dockerfile: ./apps/followers/Dockerfile
+    command: npm run start:dev followers
+    ports:
+      - 3003:3003
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - db
+      - redis
+
   notifications:
     build:
       context: .
@@ -63,6 +77,7 @@ services:
       - api-gateway
       - auth
       - users
+      - followers
 
   db:
     image: postgres:latest

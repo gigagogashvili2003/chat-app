@@ -126,6 +126,24 @@
       "compilerOptions": {
         "tsConfigPath": "libs/redis-lib/tsconfig.lib.json"
       }
+    },
+    "followers-lib": {
+      "type": "library",
+      "root": "libs/followers-lib",
+      "entryFile": "index",
+      "sourceRoot": "libs/followers-lib/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/followers-lib/tsconfig.lib.json"
+      }
+    },
+    "followers": {
+      "type": "application",
+      "root": "apps/followers",
+      "entryFile": "main",
+      "sourceRoot": "apps/followers/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/followers/tsconfig.app.json"
+      }
     }
   }
 }

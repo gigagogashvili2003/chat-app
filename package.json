@@ -100,7 +100,8 @@
       "^@app/notifications-lib(|/.*)$": "<rootDir>/libs/notifications-lib/src/$1",
       "^@app/utils-lib(|/.*)$": "<rootDir>/libs/utils-lib/src/$1",
       "^@app/sessions-lib(|/.*)$": "<rootDir>/libs/sessions-lib/src/$1",
-      "^@app/redis-lib(|/.*)$": "<rootDir>/libs/redis-lib/src/$1"
+      "^@app/redis-lib(|/.*)$": "<rootDir>/libs/redis-lib/src/$1",
+      "^@app/followers-lib(|/.*)$": "<rootDir>/libs/followers-lib/src/$1"
     }
   }
 }

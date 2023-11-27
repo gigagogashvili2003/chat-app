@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,58 +13,72 @@ enum Role {
 }
 
 model User {
-  id Int @default(autoincrement()) @id
-  username String @unique
-  email String @unique
-  password String
-  role Role @default(USER)
-  active Boolean @default(false)
-  verified Boolean @default(false)
-  createdAt DateTime? @map(name: "created_at") @default(now())
-  updatedAt DateTime? @map(name: "updated_at") @default(now())
+  id        Int       @id @default(autoincrement())
+  username  String    @unique
+  email     String    @unique
+  password  String
+  role      Role      @default(USER)
+  active    Boolean   @default(false)
+  verified  Boolean   @default(false)
+  createdAt DateTime? @default(now()) @map(name: "created_at")
+  updatedAt DateTime? @default(now()) @map(name: "updated_at")
 
   deactivatedUser DeactivatedUser?
-  disabledUser DisabledUser?
-  session Session[]
+  disabledUser    DisabledUser?
+  session         Session[]
+  followers       Follower[]          @relation("UserFollowers")
+  followees       Follower[]          @relation("UserFollowees")
 
   @@map(name: "users")
 }
 
 model DeactivatedUser {
-  id Int @default(autoincrement()) @id
-  reason String
-  userId Int @unique @map(name: "user_id")
-  user User @relation(fields: [userId], references: [id])
-  createdAt DateTime? @map(name: "created_at") @default(now())
-  updatedAt DateTime? @map(name: "updated_at") @default(now())
-  
+  id        Int       @id @default(autoincrement())
+  reason    String
+  userId    Int       @unique @map(name: "user_id")
+  user      User      @relation(fields: [userId], references: [id])
+  createdAt DateTime? @default(now()) @map(name: "created_at")
+  updatedAt DateTime? @default(now()) @map(name: "updated_at")
+
   @@map(name: "deactivated_users")
 }
 
 model DisabledUser {
-  id Int @default(autoincrement()) @id
-  reason String
-  disabledAt DateTime @map(name: "disabled_at")
-  userId Int @unique @map(name: "user_id")
-  user User @relation(fields: [userId], references: [id])
-  createdAt DateTime? @map(name: "created_at") @default(now())
-  updatedAt DateTime? @map(name: "updated_at") @default(now())
+  id         Int       @id @default(autoincrement())
+  reason     String
+  disabledAt DateTime  @map(name: "disabled_at")
+  userId     Int       @unique @map(name: "user_id")
+  user       User      @relation(fields: [userId], references: [id])
+  createdAt  DateTime? @default(now()) @map(name: "created_at")
+  updatedAt  DateTime? @default(now()) @map(name: "updated_at")
 
   @@map(name: "disabled_users")
 }
 
 model Session {
-  id Int @default(autoincrement()) @id
-  deviceId String @unique @map(name: "device_id")
-  accessToken String @unique @map(name: "access_token")
-  accessTokenExpiresAt DateTime @map(name: "access_token_expires_at")
-  refreshToken String @unique @map(name: "refresh_token")
-  refreshTokenExpiresAt DateTime @map(name: "refresh_token_expires_at")
-  userId Int @map(name: "user_id")
-  user User @relation(fields: [userId], references: [id])
-  createdAt DateTime? @map(name: "created_at") @default(now())
-  updatedAt DateTime? @map(name: "updated_at") @default(now())
+  id                    Int       @id @default(autoincrement())
+  deviceId              String    @unique @map(name: "device_id")
+  accessToken           String    @unique @map(name: "access_token")
+  accessTokenExpiresAt  DateTime  @map(name: "access_token_expires_at")
+  refreshToken          String    @unique @map(name: "refresh_token")
+  refreshTokenExpiresAt DateTime  @map(name: "refresh_token_expires_at")
+  userId                Int       @map(name: "user_id")
+  user                  User      @relation(fields: [userId], references: [id])
+  createdAt             DateTime? @default(now()) @map(name: "created_at")
+  updatedAt             DateTime? @default(now()) @map(name: "updated_at")
 
   @@map(name: "sessions")
 }
 
+model Follower {
+  id                    Int       @id @default(autoincrement())
+  followerId            Int       @map(name: "follower_id")
+  followeeId            Int       @map(name: "followee_id")
+  follower              User      @relation("UserFollowers", fields: [followerId], references: [id])
+  followee              User      @relation("UserFollowees", fields: [followeeId], references: [id])
+  createdAt             DateTime? @default(now()) @map(name: "created_at")
+  updatedAt             DateTime? @default(now()) @map(name: "updated_at")
+
+  @@unique([followerId, followeeId])
+  @@map(name: "followers")
+}

@@ -18,60 +18,26 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@app/auth-lib": [
-        "libs/auth-lib/src"
-      ],
-      "@app/auth-lib/*": [
-        "libs/auth-lib/src/*"
-      ],
-      "@app/rmq-lib": [
-        "libs/rmq-lib/src"
-      ],
-      "@app/rmq-lib/*": [
-        "libs/rmq-lib/src/*"
-      ],
-      "@app/users-lib": [
-        "libs/users-lib/src"
-      ],
-      "@app/users-lib/*": [
-        "libs/users-lib/src/*"
-      ],
-      "@app/common-lib": [
-        "libs/common-lib/src"
-      ],
-      "@app/common-lib/*": [
-        "libs/common-lib/src/*"
-      ],
-      "@app/prisma-lib": [
-        "libs/prisma-lib/src"
-      ],
-      "@app/prisma-lib/*": [
-        "libs/prisma-lib/src/*"
-      ],
-      "@app/notifications-lib": [
-        "libs/notifications-lib/src"
-      ],
-      "@app/notifications-lib/*": [
-        "libs/notifications-lib/src/*"
-      ],
-      "@app/utils-lib": [
-        "libs/utils-lib/src"
-      ],
-      "@app/utils-lib/*": [
-        "libs/utils-lib/src/*"
-      ],
-      "@app/sessions-lib": [
-        "libs/sessions-lib/src"
-      ],
-      "@app/sessions-lib/*": [
-        "libs/sessions-lib/src/*"
-      ],
-      "@app/redis-lib": [
-        "libs/redis-lib/src"
-      ],
-      "@app/redis-lib/*": [
-        "libs/redis-lib/src/*"
-      ]
+      "@app/auth-lib": ["libs/auth-lib/src"],
+      "@app/auth-lib/*": ["libs/auth-lib/src/*"],
+      "@app/rmq-lib": ["libs/rmq-lib/src"],
+      "@app/rmq-lib/*": ["libs/rmq-lib/src/*"],
+      "@app/users-lib": ["libs/users-lib/src"],
+      "@app/users-lib/*": ["libs/users-lib/src/*"],
+      "@app/common-lib": ["libs/common-lib/src"],
+      "@app/common-lib/*": ["libs/common-lib/src/*"],
+      "@app/prisma-lib": ["libs/prisma-lib/src"],
+      "@app/prisma-lib/*": ["libs/prisma-lib/src/*"],
+      "@app/notifications-lib": ["libs/notifications-lib/src"],
+      "@app/notifications-lib/*": ["libs/notifications-lib/src/*"],
+      "@app/utils-lib": ["libs/utils-lib/src"],
+      "@app/utils-lib/*": ["libs/utils-lib/src/*"],
+      "@app/sessions-lib": ["libs/sessions-lib/src"],
+      "@app/sessions-lib/*": ["libs/sessions-lib/src/*"],
+      "@app/redis-lib": ["libs/redis-lib/src"],
+      "@app/redis-lib/*": ["libs/redis-lib/src/*"],
+      "@app/followers-lib": ["libs/followers-lib/src"],
+      "@app/followers-lib/*": ["libs/followers-lib/src/*"]
     }
   }
 }

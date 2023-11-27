@@ -14,6 +14,10 @@ export class UsersLibService {
     return this.usersRepository.findOneByUsername(username);
   }
 
+  public findOneById(id: number) {
+    return this.usersRepository.findOneById(id);
+  }
+
   public create(userCreateInput: Prisma.UserCreateInput) {
     return this.usersRepository.create(userCreateInput);
   }

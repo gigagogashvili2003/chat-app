@@ -14,4 +14,14 @@ export enum ErrorMessages {
   OTP_NOT_FOUND = 'OTP not found. Please initiate the verification process again.',
   INVALID_PASSWORD = 'Invalid old password. Please provide the correct old password.',
   SAME_PASSWORDS = 'The new password must be different from the current password.',
+
+  //Followers
+  INVALID_FOLLOWER = 'Invalid followerId',
+  FOLLOWEE_NOT_FOUND = 'Followee not found!',
+  FOLLOW_YOURSELF = "Cann't follow yourself!",
+  UNFOLLOW_YOURSELF = "Cann't unfollow yourself!",
+  ALREADY_FOLLOWING = "You're already following user ",
+  INVALID_UNFOLLOWER = 'Invalid unfollowerId',
+  UNFOLLOWEE_NOT_FOUND = 'Unfollowee not found!',
+  NOT_FOLLOWING_USER = "You aren't following that user ",
 }

@@ -6,4 +6,8 @@ export enum SuccessMessages {
   OTP_HAS_SENT = 'One Time Password has sent to the provided email address!',
   ACCOUNT_HAS_VERIFIED = 'Your account has been successfully verified.',
   PASSWORD_CHANGED_SUCCESFULLY = 'Your password has been changed successfully.',
+
+  // Followers
+  FOLLOWED_USER = 'You succesfully followed user ',
+  UNFOLLOWED_USER = 'You succesfully unfollowed user ',
 }
